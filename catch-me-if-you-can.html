@@ -1,0 +1,19 @@
+<head>
+  <title>catch-me-if-you-can</title>
+</head>
+
+<body>
+  <h1>Catch Me!</h1>
+{{#if currentUser}}
+    <span>Logged as {{username}}</span>
+{{> map}}
+{{else}}
+{{> loginButtons}}
+{{/if}}
+</body>
+
+<template name="map">
+    <div class="map-container">
+      {{> googleMap name="map" options=mapOptions}}
+    </div>
+</template>
