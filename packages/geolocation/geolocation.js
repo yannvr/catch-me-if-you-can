@@ -3,7 +3,7 @@ var reactiveLocation = new ReactiveVar(null);
 var defaultOptions = {
     enableHighAccuracy: true,
     timeout: 5000,
-    maximumAge: 0
+    maximumAge: 1000
 };
 
 function success(pos) {
