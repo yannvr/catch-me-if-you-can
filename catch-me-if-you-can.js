@@ -2,6 +2,7 @@ Markers = new Mongo.Collection('markers');
 
 if (Meteor.isClient) {
     var username = new ReactiveVar(),
+        prevPosition = new ReactiveVar(),
         position = new ReactiveVar(),
         TIMEOUT_PLAYER_OFFLINE = 120 * 1000;
 
@@ -40,35 +41,64 @@ if (Meteor.isClient) {
         }
 
         console.log("Player: " + username.get() + " position lat: "+pos.coords.latitude + "lng: "+ pos.coords.longitude);
+        if(position.get()) {
+            prevPosition.set(position.get());
+        }
         position.set({'lat': pos.coords.latitude, 'lng': pos.coords.longitude});
     }
 
 
 
     Meteor.startup(function () {
-
         if (window.location.href.indexOf('clearDB') > -1) {
             Markers.remove({});
         }
 
+        var hotcodepush = false;
 
+        Meteor._reload.onMigrate(function() {
+            hotcodepush = true;
+            return [true];
+        })
 
-        setInterval(function () {
+        window.intervalPlayerOffline =setInterval(function () {
             //Markers.remove({"_id": Meteor.userId()});
-            //console.log("Player: " + username.get() + " went offline");
-            Meteor.call("deleteMarker");
+            //console.log('checking if player offline');
+            if(prevPosition.get() && position.get()) {
+                if(prevPosition.get().lat == position.get().lat &&
+                prevPosition.get().lng == position.get().lng) {
+                    Meteor.call("deleteMarker");
+                }
+            } else {
+                //console.log('player online');
+            }
+            //if (position && prevPosition && prevPosition.lat === position.lat && prevPosition.lng === position.lng) {
+            //    Meteor.call("deleteMarker");
+            //} else {
+            //    console.log('player online');
+            //}
         }, TIMEOUT_PLAYER_OFFLINE);
+
+        window.addEventListener('beforeunload', function(e) {
+            if(!hotcodepush) {
+                clearInterval(window.intervalPlayerOffline);
+                console.log("window close");
+            }
+            if(hotcodepush) console.log("Hot code reload");
+        })
 
         Geolocation.getCurrentPosition().then(function (pos) {
             updatePosition(pos);
             //GoogleMaps.get('map').instance.setCenter({ lat: pos.coords.latitude, lng: pos.coords.longitude });
         }).then(function () {
             GoogleMaps.load();
-        });
+        }).catch(function(error) {
+           console.error(error);
+        })
 
         Geolocation.watchPosition(function (pos) {
-            console.log('watch position update' + pos)
-            //updatePosition(pos)
+            console.log('position update for ' + username.get())
+            updatePosition(pos)
         });
 
         Template.map.onCreated(function () {
@@ -82,7 +112,7 @@ if (Meteor.isClient) {
     Template.map.onCreated(function () {
         GoogleMaps.ready('map', function (map) {
 
-            // Create an array of styles.
+            //// Create an array of styles.
             var styles = [
                 {
                     stylers: [
@@ -104,15 +134,16 @@ if (Meteor.isClient) {
                     ]
                 }
             ];
-
-            // Create a new StyledMapType object, passing it the array of styles,
-            // as well as the name to be displayed on the map type control.
-            var styledMap = new google.maps.StyledMapType(styles,
-                {name: "Styled Map"});
-
-            //Associate the styled map with the MapTypeId and set it to display.
-            map.instance.mapTypes.set('map_style', styledMap);
-            map.instance.setMapTypeId('map_style');
+            //
+            //// Create a new StyledMapType object, passing it the array of styles,
+            //// as well as the name to be displayed on the map type control.
+            //var styledMap = new google.maps.StyledMapType(styles,
+            //    {name: "Styled Map"});
+            //
+            ////Associate the styled map with the MapTypeId and set it to display.
+            map.instance.setOptions({styles: styles});
+            //map.instance.mapTypes.set('map_style', styledMap);
+            //map.instance.setMapTypeId('map_style');
 
             var markers = {};
 
@@ -176,7 +207,7 @@ if (Meteor.isClient) {
         mapOptions: function () {
             if (GoogleMaps.loaded()) {
                 return {
-                    center: position.get('pos') || {lat: 0, lng: 0},
+                    center: position.get() || {lat: 0, lng: 0},
                     zoom: 16,
                     mapTypeControlOptions: {
                         mapTypeIds: [google.maps.MapTypeId.ROADMAP, 'map_style']
@@ -188,9 +219,9 @@ if (Meteor.isClient) {
     });
 
     Template.body.helpers({
-        pos: function () {
-            return Session.get('pos')
-        },
+        //pos: function () {
+        //    return Session.get()
+        //},
         username: function () {
             return username.get()
         }
@@ -249,13 +280,14 @@ Meteor.methods({
     //},
     deleteMarker: function () {
         var marker = Markers.findOne({owner: this.userId});
-        if(marker.length) {
-            if (marker.owner !== Meteor.userId()) {
-                // make sure only the owner can delete it
-                throw new Meteor.Error("not-authorized");
-            }
+        if(marker) {
+            //if (marker.owner !== Meteor.userId()) {
+            //    // make sure only the owner can delete it
+            //    throw new Meteor.Error("not-authorized");
+            //}
 
             Markers.remove({_id: marker._id});
+            console.log("Player: " + username.get() + " went offline");
         }
 
     },
