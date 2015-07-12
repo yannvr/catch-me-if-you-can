@@ -28,7 +28,11 @@ Geolocation = {
                 resolve(pos)
             }
             function error (error) { reject(error)}
-            navigator.geolocation.getCurrentPosition(success, error, options);
+            try {
+                navigator.geolocation.getCurrentPosition(success, error, options)
+            } catch(e) {
+                window.location.reload()
+            }
         })
     },
     reactiveLocation: reactiveLocation.get(),

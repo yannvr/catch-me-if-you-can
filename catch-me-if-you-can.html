@@ -1,11 +1,12 @@
 <head>
   <title>catch-me-if-you-can</title>
+    <script src="lib/randomColor.js"></script>
 </head>
 
 <body>
   <h1>Catch Me!</h1>
 {{#if currentUser}}
-    <span>Logged as {{username}}</span>
+    <p>Logged as {{username}} <a class="logout">Logout</a> </p>
 {{> map}}
 {{else}}
 {{> loginButtons}}

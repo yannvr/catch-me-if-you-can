@@ -4,7 +4,7 @@ if (Meteor.isClient) {
     var username = new ReactiveVar(),
         prevPosition = new ReactiveVar(),
         position = new ReactiveVar(),
-        TIMEOUT_PLAYER_OFFLINE = 120 * 1000;
+        TIMEOUT_PLAYER_OFFLINE = 5 * 60 * 1000;
 
     Meteor.subscribe("markers");
 
@@ -27,6 +27,7 @@ if (Meteor.isClient) {
                     lat: pos.coords.latitude,
                     lng: pos.coords.longitude,
                     owner: Meteor.userId(),
+                    color: randomColor({}),
                     username: username.get()
                 });
             } else {
@@ -149,11 +150,17 @@ if (Meteor.isClient) {
 
             Markers.find().observe({
                 added: function (document) {
+                    var pinImage = new google.maps.MarkerImage("http://chart.apis.google.com/chart?chst=d_map_pin_letter&chld=%E2%80%A2|" + document.color.replace('#', ''),
+                        new google.maps.Size(21, 34),
+                        new google.maps.Point(0,0),
+                        new google.maps.Point(10, 34));
+
                     // Create a marker for this document
                     var marker = new google.maps.Marker({
                         draggable: true,
                         animation: google.maps.Animation.DROP,
                         position: new google.maps.LatLng(document.lat, document.lng),
+                        icon: pinImage,
                         //backgroundColor: hexUserColor,
                         map: map.instance,
                         // We store the document _id on the marker in order
@@ -170,7 +177,7 @@ if (Meteor.isClient) {
                         // Details: distance, mode etc
                     });
 
-                    if(document.owner !== Meteor.userId()) {
+                    if (document.owner !== Meteor.userId()) {
                         infoWindow.open(map.instance, marker);
                     }
 
@@ -215,7 +222,6 @@ if (Meteor.isClient) {
                 };
             }
         }
-
     });
 
     Template.body.helpers({
@@ -224,6 +230,12 @@ if (Meteor.isClient) {
         //},
         username: function () {
             return username.get()
+        }
+    });
+
+    Template.body.events({
+        "click .logout": function(e) {
+           Meteor.logout();
         }
     });
 
@@ -295,7 +307,7 @@ Meteor.methods({
         var previousPositions = Markers.find({owner: this.userId});
         previousPositions.forEach(function(pos) {
             Markers.remove(pos);
-            console.log('clear prev pos: ' + pos)
+            //console.log('clear prev pos: ' + pos)
         })
     }
     //setChecked: function (taskId, setChecked) {
