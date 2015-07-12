@@ -157,11 +157,11 @@ if (Meteor.isClient) {
 
                     // Create a marker for this document
                     var marker = new google.maps.Marker({
-                        draggable: true,
+                        draggable: false,
                         animation: google.maps.Animation.DROP,
                         position: new google.maps.LatLng(document.lat, document.lng),
                         icon: pinImage,
-                        //backgroundColor: hexUserColor,
+                        backgroundColor: document.color,
                         map: map.instance,
                         // We store the document _id on the marker in order
                         // to update the document within the 'dragend' event below.
@@ -173,7 +173,7 @@ if (Meteor.isClient) {
                     });
 
                     google.maps.event.addListener(marker, 'click', function (event) {
-                        //infoWindow.open(map.instance, marker)
+                        infoWindow.open(map.instance, marker)
                         // Details: distance, mode etc
                     });
 
