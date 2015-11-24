@@ -1,0 +1,31 @@
+{
+  "format": "unipackage-unibuild-pre1",
+  "packageVariables": [
+    {
+      "name": "Geolocation"
+    }
+  ],
+  "uses": [
+    {
+      "package": "meteor"
+    },
+    {
+      "package": "session",
+      "constraint": "1.1.0"
+    },
+    {
+      "package": "reactive-var",
+      "constraint": "1.0.5"
+    }
+  ],
+  "resources": [
+    {
+      "type": "prelink",
+      "file": "os/packages/yannvr_geolocation.js",
+      "length": 8719,
+      "offset": 0,
+      "servePath": "/packages/yannvr_geolocation.js",
+      "sourceMap": "os/packages/yannvr_geolocation.js.map"
+    }
+  ]
+}

@@ -1,0 +1,44 @@
+{
+  "builtBy": "meteor/16",
+  "unibuildDependencies": {
+    "os.json": {
+      "files": {
+        "/Users/yannvr/dev/meteor/catch-me-if-you-can/packages/geolocation/package.js": "b9cac04c8807ec1aef93e2cfcc1aabf37187e478",
+        "/Users/yannvr/dev/meteor/catch-me-if-you-can/packages/geolocation/geolocation.js": "2dfb3c2a4dad4496eb24cde044788d2a6dad68e8"
+      },
+      "directories": []
+    },
+    "web.browser.json": {
+      "files": {
+        "/Users/yannvr/dev/meteor/catch-me-if-you-can/packages/geolocation/package.js": "b9cac04c8807ec1aef93e2cfcc1aabf37187e478",
+        "/Users/yannvr/dev/meteor/catch-me-if-you-can/packages/geolocation/geolocation.js": "2dfb3c2a4dad4496eb24cde044788d2a6dad68e8"
+      },
+      "directories": []
+    }
+  },
+  "pluginDependencies": {
+    "files": {
+      "/Users/yannvr/dev/meteor/catch-me-if-you-can/packages/geolocation/package.js": "b9cac04c8807ec1aef93e2cfcc1aabf37187e478"
+    },
+    "directories": []
+  },
+  "pluginProviderPackageMap": {
+    "yannvr:geolocation": {
+      "kind": "local",
+      "sourceRoot": "/Users/yannvr/dev/meteor/catch-me-if-you-can/packages/geolocation"
+    },
+    "meteor": {
+      "kind": "versioned",
+      "version": "1.1.6"
+    },
+    "session": {
+      "kind": "versioned",
+      "version": "1.1.0"
+    },
+    "reactive-var": {
+      "kind": "versioned",
+      "version": "1.0.5"
+    }
+  },
+  "includeCordovaUnibuild": false
+}
